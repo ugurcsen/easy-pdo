@@ -1,4 +1,6 @@
-﻿<?php $db=new PDO(
+﻿<?php
+
+/*$db=new PDO(
 "mysql:host=localhost;
 dbname=tl;
 charset=utf8;
@@ -6,6 +8,8 @@ charset=utf8;
 /************************************************************\
 *
 \************************************************************/
+
+/*
 function query($sorgu,$deger=array(),$db="")
 {
     if($db=="")
@@ -47,4 +51,22 @@ function query($sorgu,$deger=array(),$db="")
         }
     }
 }
-?>
+?>*/
+namespace EasyPDO;
+class EasyPDO
+{
+    private $host   = NULL;
+    private $user   = NULL;
+    private $passw  = NULL;
+    private $dbname = NULL;
+
+    function connect(){
+        $this->host="selam";
+    }
+
+    function write(){
+        echo $this->host;
+    }
+}
+
+EasyPDO::write();
