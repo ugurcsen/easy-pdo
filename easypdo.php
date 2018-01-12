@@ -52,21 +52,26 @@ function query($sorgu,$deger=array(),$db="")
     }
 }
 ?>*/
-namespace EasyPDO;
+
+namespace easypdo\EasyPDO;
+
 class EasyPDO
 {
-    private $host   = NULL;
-    private $user   = NULL;
-    private $passw  = NULL;
-    private $dbname = NULL;
+    private $db     = NULL;
+    public $table   = NULL;
+    public $process   = NULL;
 
-    function connect(){
-        $this->host="selam";
+    public function connect($Host, $DatabaseName, $UserName, $Password ,$CharSet = 'utf8'){
+        try {
+            $this->db = $db=new PDO('mysql:host='.$Host.';dbname='.$DatabaseName.';charset='.$CharSet.';', $UserName,$Password);
+            return true;
+        } catch (PDOException $e) {
+            return 'Connection failed: ' . $e->getMessage();
+        }
+
     }
 
-    function write(){
-        echo $this->host;
+    function execute(){
+
     }
 }
-
-EasyPDO::write();
