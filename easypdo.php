@@ -53,8 +53,7 @@ function query($sorgu,$deger=array(),$db="")
 }
 ?>*/
 
-namespace easypdo\EasyPDO;
-
+require 'EasyPDO_Table.php';
 class EasyPDO
 {
     private $db     = NULL;
@@ -71,7 +70,11 @@ class EasyPDO
 
     }
 
-    function execute(){
+    public function table($name){
+        return new EasyPDO_Table($this->db ,$name);
+    }
 
+    public function query($queryText){
+        return $this->db->query($queryText);
     }
 }
