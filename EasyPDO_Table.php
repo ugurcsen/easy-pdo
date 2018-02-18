@@ -16,7 +16,7 @@ class EasyPDO_Table
         return $this->db->query("SELECT * FROM `".$this->name."` ")->fetch();
     }
 
-    public function select($where=null,$vals=null){
+    public function select($where=NULL,$vals=NULL){
         $cols = '*';
         if ($this->cols != NULL) {
             $cols = '';
@@ -29,7 +29,7 @@ class EasyPDO_Table
         if (where != NULL) {
             $where = ' WHERE ' . $this->where;
         }
-        if($vals!=null){
+        if($vals!=NULL){
             $d = $this->db-prepare("SELECT " . $cols . " FROM `" . $this->name . "`" . $where);
             $r = $d->execute($vals);
         }
@@ -68,11 +68,11 @@ class EasyPDO_Table
         return $r;
     }
 
-    public function delete($where=null,$vals=null){
+    public function delete($where=NULL,$vals=NULL){
         if (where != NULL) {
             $where = ' WHERE ' . $this->where;
         }
-        if($vals!=null){
+        if($vals!=NULL){
             $d = $this->db-prepare("DELETE FROM `" . $this->name . "`" . $where);
             $r = $d->execute($vals);
         }
@@ -82,7 +82,7 @@ class EasyPDO_Table
         return $r;
     }
 
-    public function update($where=null,$cols,$vals,$security=false){
+    public function update($where=NULL,$cols,$vals,$security=false){
         if (where != NULL) {
             $where = ' WHERE ' . $this->where;
         }
