@@ -3,167 +3,127 @@
 class EasyPDO_Table
 {
     private $db;
-    private $name  = NULL;
-    public  $cols  = NULL;
+    private $name = NULL;
+    public $cols = NULL;
 
-    function __construct($DataBase,$table)
+    function __construct($DataBase, $table)
     {
-        $this->db   = $DataBase;
+        $this->db = $DataBase;
         $this->name = $table;
     }
 
-    public function all(){
-        return $this->db->query("SELECT * FROM `".$this->name."` ")->fetch();
+    public function all()
+    {
+        return $this->db->query("SELECT * FROM `" . $this->name . "` ");
     }
 
-    public function select($where=NULL,$vals=NULL){
+    public function select($where = '', $vals = NULL)
+    {
         $cols = '*';
         if ($this->cols != NULL) {
-            $cols = '';
             $comma = '';
             foreach ($this->cols as $cols2) {
-                $cols .= '`' . $cols2 . '`' . $comma;
+                $cols .= $comma . '`' . $cols2 . '`';
                 $comma = ',';
             }
         }
-        if (where != NULL) {
-            $where = ' WHERE ' . $this->where;
-        }
-        if($vals!=NULL){
-            $d = $this->db-prepare("SELECT " . $cols . " FROM `" . $this->name . "`" . $where);
-            $r = $d->execute($vals);
-        }
-        else{
+        if ($vals != NULL) {
+            $r = $this->db->prepare("SELECT " . $cols . " FROM `" . $this->name . "`" . $where);
+            $r->execute($vals);
+        } else {
             $r = $this->db->query("SELECT " . $cols . " FROM `" . $this->name . "`" . $where);
         }
         return $r;
     }
 
-    public function insert($cols,$vals,$security=false){
-        if($security) {
-            $comma='';
-            $colsText='';
+    public function insert($vals, $security = false)
+    {
+        if ($security) {
+            $comma = '';
+            $colsText = '';
             $valLoc = '';
-            foreach ($cols as $cols2) {
-                $colsText .= '`' . $cols2 . '`' . $comma;
-                $valLoc .= '?' . $comma;
+            foreach ($this->cols as $cols2) {
+                $colsText .= $comma . '`' . $cols2 . '`';
+                $valLoc .= $comma . '?';
                 $comma = ',';
             }
-            $d = $this->db->prepare("INSERT INTO " . $this->name . "(" . $colsText . ") VALUES(" . $valLoc . ")");
-            $r = $d->execute($vals);
-        }
-        else{
-            $comma='';
-            $colsText='';
-            $valsText='';
-            $i=0;
-            foreach ($cols as $cols2) {
-                $colsText .= '`' . $cols2 . '`' . $comma;
-                $valsText .= '"'.$vals[$i].'"'.$comma;
+            $r = $this->db->prepare("INSERT INTO `" . $this->name . "`(" . $colsText . ") VALUES(" . $valLoc . ")");
+            $r->execute($vals);
+        } else {
+            $comma = '';
+            $colsText = '';
+            $valsText = '';
+            $i = 0;
+            foreach ($this->cols as $cols2) {
+                $colsText .= $comma . '`' . $cols2 . '`';
+                $valsText .= $comma . '"' . $vals[$i] . '"';
                 $i++;
                 $comma = ',';
             }
-            $r = $this->db->query("INSERT INTO " . $this->name . "(" . $colsText . ") VALUES(" . $valsText . ")");
+            $r = $this->db->query("INSERT INTO `" . $this->name . "`(" . $colsText . ") VALUES(" . $valsText . ")");
         }
         return $r;
     }
 
-    public function delete($where=NULL,$vals=NULL){
-        if (where != NULL) {
-            $where = ' WHERE ' . $this->where;
-        }
-        if($vals!=NULL){
-            $d = $this->db-prepare("DELETE FROM `" . $this->name . "`" . $where);
-            $r = $d->execute($vals);
-        }
-        else{
+    public function delete($where = '', $vals = NULL)
+    {
+        if ($vals != NULL) {
+            $r = $this->db->prepare("DELETE FROM `" . $this->name . "`" . $where);
+            $r->execute($vals);
+        } else {
             $r = $this->db->query("DELETE FROM `" . $this->name . "`" . $where);
         }
         return $r;
     }
 
-    public function update($where=NULL,$cols,$vals,$security=false){
-        if (where != NULL) {
-            $where = ' WHERE ' . $this->where;
-        }
-        if($security) {
-            $comma='';
-            $colsText='';
-            foreach ($cols as $cols2) {
-                $colsText .= '`' . $cols2 . '`=?' . $comma;
+    public function update($where = '', $vals, $security = false)
+    {
+        if ($security) {
+            $comma = '';
+            $colsText = '';
+            foreach ($this->cols as $cols2) {
+                $colsText .= $comma . '`' . $cols2 . '`=?';
                 $comma = ',';
             }
-            $d = $this->db->prepare("UPDATE " . $this->name . " SET " . $colsText . $where);
-            $r = $d->execute($vals);
-        }
-        else{
-            $comma='';
-            $colsText='';
-            $i=0;
-            foreach ($cols as $cols2) {
-                $colsText .= "`" . $cols2 . "`='" . $vals[$i] . "'" . $comma;
+            $r = $this->db->prepare("UPDATE `" . $this->name . "`` SET " . $colsText . $where);
+            $r->execute($vals);
+        } else {
+            $comma = '';
+            $colsText = '';
+            $i = 0;
+            foreach ($this->cols as $cols2) {
+                $colsText .= $comma . "`" . $cols2 . "`='" . $vals[$i] . "'";
                 $i++;
                 $comma = ',';
             }
-            $r = $this->db->query("UPDATE " . $this->name . " SET " . $colsText . $where);
+            $r = $this->db->query("UPDATE `" . $this->name . "`` SET " . $colsText . $where);
         }
         return $r;
     }
 
-    /*
-    public function totalPage(){
+    public function totalPage($limit = 10, $where = '')
+    {
 
-        if($this->where!=NULL){
-            $where = 'WHERE '.$this->where;
-        }
-        else{
-            $where = '';
-        }
+        $data = $this->db->query("SELECT COUNT(*) as `totaldata` FROM `'.$this->name.'` " . $where)->fetch(PDO::FETCH_ASSOC);
 
-        if($this->limit!=NULL){
-            $limit = $this->limit;
-        }
-        else{
-            $limit = 0;
-        }
-
-        $data = $this->db->query("SELECT COUNT(*) as `totaldata` FROM `'.$this->name.'` ".$where)->fetch(PDO::FETCH_ASSOC);
-
-        return ceil($data['totaldata']/$limit);
+        return ceil($data['totaldata'] / $limit);
 
     }
 
-    public function getPage($page){
+    public function getPage($page, $limit = 10, $where = '')
+    {
 
-        $colText = '';
-        foreach ($this->cols as $data) {
-            $colText = $colText . '`' . $data . '`';
+        $cols = '*';
+        if ($this->cols != NULL) {
+            $comma = '';
+            foreach ($this->cols as $cols2) {
+                $cols .= $comma . '`' . $cols2 . '`';
+                $comma = ',';
+            }
         }
+        $data = $this->db->query("SELECT " . $cols . " FROM `'.$this->name.'` " . $where . " LIMIT " . ($page - 1) * $limit . "," . $limit);
+        return $data;
 
     }
 
-    public function getData(){
-
-        $colText = '';
-        foreach ($this->cols as $data) {
-            $colText = $colText . '`' . $data . '`';
-        }
-
-    }
-
-    public function getConst(){
-
-        if($this->where!=NULL){
-            $where = 'WHERE '.$this->where;
-        }
-        else{
-            $where = '';
-        }
-
-        $data = $this->db->query("SELECT COUNT(*) as `totaldata` FROM `'.$this->name.'` ".$where)->fetch(PDO::FETCH_ASSOC);
-
-        return $data['totaldata'];// burada kaldım örenk veritabanı bulup denemeliyim
-
-    }
-    */
 }

@@ -3,10 +3,12 @@ require 'easypdo.php';
 
 $a = new EasyPDO();
 $a->connect('localhost', 'birebirilgi', 'root', '');
-$b = $a->table('nav');
-$b->cols=array('name');
-$b->where="name LIKE '%Ders%'";
-$c=$b->select();
-foreach ($c as $item) {
-    echo $item['name'];echo '<br>';
+$dbPages = $a->table('pages');
+print_r($dbPages->select("WHERE `url_name`= ?",['url2'])->fetch());
+if(!empty($sorgu)) {
+    $name = $sorgu['name'];
+    $keywords = $sorgu['keywords'];
+    $description = $sorgu['description'];
+    $author = $sorgu['author'];
+    echo $sorgu['content'];
 }
