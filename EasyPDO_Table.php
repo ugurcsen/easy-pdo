@@ -19,13 +19,16 @@ class EasyPDO_Table
 
     public function select($where = '', $vals = NULL)
     {
-        $cols = '*';
         if ($this->cols != NULL) {
             $comma = '';
+            $cols = '';
             foreach ($this->cols as $cols2) {
                 $cols .= $comma . '`' . $cols2 . '`';
                 $comma = ',';
             }
+        }
+        else{
+            $cols = '*';
         }
         if ($vals != NULL) {
             $r = $this->db->prepare("SELECT " . $cols . " FROM `" . $this->name . "`" . $where);
@@ -85,7 +88,7 @@ class EasyPDO_Table
                 $colsText .= $comma . '`' . $cols2 . '`=?';
                 $comma = ',';
             }
-            $r = $this->db->prepare("UPDATE `" . $this->name . "`` SET " . $colsText . $where);
+            $r = $this->db->prepare("UPDATE `" . $this->name . "` SET " . $colsText . $where);
             $r->execute($vals);
         } else {
             $comma = '';
@@ -96,15 +99,24 @@ class EasyPDO_Table
                 $i++;
                 $comma = ',';
             }
-            $r = $this->db->query("UPDATE `" . $this->name . "`` SET " . $colsText . $where);
+            $r = $this->db->query("UPDATE `" . $this->name . "` SET " . $colsText . $where);
         }
         return $r;
+    }
+
+    public function total($where = '')
+    {
+
+        $data = $this->db->query("SELECT COUNT(*) as `totaldata` FROM `".$this->name."` " . $where)->fetch(PDO::FETCH_ASSOC);
+
+        return $data['totaldata'];
+
     }
 
     public function totalPage($limit = 10, $where = '')
     {
 
-        $data = $this->db->query("SELECT COUNT(*) as `totaldata` FROM `'.$this->name.'` " . $where)->fetch(PDO::FETCH_ASSOC);
+        $data = $this->db->query("SELECT COUNT(*) as `totaldata` FROM `".$this->name."` " . $where)->fetch(PDO::FETCH_ASSOC);
 
         return ceil($data['totaldata'] / $limit);
 
@@ -113,15 +125,19 @@ class EasyPDO_Table
     public function getPage($page, $limit = 10, $where = '')
     {
 
-        $cols = '*';
+
         if ($this->cols != NULL) {
             $comma = '';
+            $cols = '';
             foreach ($this->cols as $cols2) {
                 $cols .= $comma . '`' . $cols2 . '`';
                 $comma = ',';
             }
         }
-        $data = $this->db->query("SELECT " . $cols . " FROM `'.$this->name.'` " . $where . " LIMIT " . ($page - 1) * $limit . "," . $limit);
+        else{
+            $cols = '*';
+        }
+        $data = $this->db->query("SELECT " . $cols . " FROM `".$this->name."` " . $where . " LIMIT " . ($page - 1) * $limit . "," . $limit);
         return $data;
 
     }

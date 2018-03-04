@@ -23,8 +23,15 @@ class EasyPDO
         return new EasyPDO_Table($this->db, $name);
     }
 
-    public function query($queryText)
+    public function query($queryText,$array=null)
     {
-        return $this->db->query($queryText);
+        if($array==null) {
+            return $this->db->query($queryText);
+        }
+        else{
+            $r = $this->db->prepare($queryText);
+            $r->execute($array);
+            return $r;
+        }
     }
 }
